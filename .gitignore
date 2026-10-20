@@ -1,0 +1,15 @@
+# Rust targets
+/target
+crates/**/target
+apps/desktop/src-tauri/target
+
+# Node
+node_modules
+apps/web/node_modules
+apps/desktop/node_modules
+apps/web/dist
+
+# OS files
+.DS_Store
+Thumbs.db
+*.log

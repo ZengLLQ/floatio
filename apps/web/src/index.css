@@ -1,0 +1,54 @@
+@import '@fontsource/dm-sans/400.css';
+@import '@fontsource/dm-sans/500.css';
+@import '@fontsource/dm-sans/600.css';
+@import '@fontsource/dm-sans/700.css';
+@import 'katex/dist/katex.min.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *, ::before, ::after {
+    font-family: 'DM Sans', sans-serif !important;
+  }
+  
+  body {
+    background-color: #181C14;
+    color: #ECDFCC;
+    font-family: 'DM Sans', sans-serif !important;
+    overflow-x: hidden;
+  }
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #181C14;
+}
+::-webkit-scrollbar-thumb {
+  background: #3C3D37;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #697565;
+}
+
+/* KaTeX font harmonization with DM Sans */
+.katex {
+  font-family: 'DM Sans', sans-serif !important;
+  font-size: 1.1em;
+}
+.katex .mathnormal,
+.katex .mathrm,
+.katex .mathbf {
+  font-family: 'DM Sans', sans-serif !important;
+}
