@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <!-- 1. Sharp Outer Rectangle Base -->
+  <rect width="512" height="512" fill="#181C14"/>
+  <!-- 2. Sharp Inner Rectangle Border -->
+  <rect x="32" y="32" width="448" height="448" fill="none" stroke="#3C3D37" stroke-width="12"/>
+  
+  <!-- 3. Centered IEEE 754 Blocks -->
+  <g transform="translate(64, 211)">
+    <!-- Sign bit block -->
+    <rect x="0" y="0" width="60" height="90" rx="16" fill="#697565"/>
+    <text x="30" y="58" font-family="'DM Sans', system-ui, sans-serif" font-size="40" font-weight="bold" fill="#181C14" text-anchor="middle">S</text>
+    
+    <!-- Exponent block -->
+    <rect x="76" y="0" width="130" height="90" rx="16" fill="#697565"/>
+    <text x="141" y="58" font-family="'DM Sans', system-ui, sans-serif" font-size="34" font-weight="bold" fill="#ECDFCC" text-anchor="middle">EXP</text>
+    
+    <!-- Fraction block -->
+    <rect x="222" y="0" width="162" height="90" rx="16" fill="#3C3D37"/>
+    <text x="303" y="58" font-family="'DM Sans', system-ui, sans-serif" font-size="34" font-weight="bold" fill="#ECDFCC" text-anchor="middle">FRAC</text>
+  </g>
+</svg>
