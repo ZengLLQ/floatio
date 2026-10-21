@@ -22,7 +22,7 @@ export const MathView: React.FC<MathViewProps> = ({ math, display = false, class
 
   return (
     <div
-      className={`overflow-x-auto overflow-y-hidden py-1 ${className}`}
+      className={`overflow-x-auto overflow-y-hidden py-1 min-w-0 scrollbar-thin ${className}`}
       dangerouslySetInnerHTML={{ __html: html }}
     />
   );

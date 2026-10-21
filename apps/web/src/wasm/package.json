@@ -1,0 +1,19 @@
+{
+  "name": "ieee754-wasm",
+  "type": "module",
+  "collaborators": [
+    "JAYCEE 曾令强"
+  ],
+  "description": "WebAssembly bindings for IEEE 754 Explorer",
+  "version": "0.1.0",
+  "files": [
+    "ieee754_wasm_bg.wasm",
+    "ieee754_wasm.js",
+    "ieee754_wasm.d.ts"
+  ],
+  "main": "ieee754_wasm.js",
+  "types": "ieee754_wasm.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}

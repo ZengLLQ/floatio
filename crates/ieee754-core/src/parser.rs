@@ -95,26 +95,64 @@ impl ParsedInput {
     }
 }
 
-fn extract_int_and_frac(abs_str: &str, f64_val: f64) -> (String, String) {
-    if abs_str.contains('e') || abs_str.contains('E') {
-        // If scientific notation is used, decompose the actual magnitude
-        let int_val = f64_val.trunc();
-        let frac_val = f64_val - int_val;
-        if int_val < 1e15 {
-            let int_str = format!("{:.0}", int_val);
-            let frac_str = format!("{:.15}", frac_val);
-            let trimmed_frac = frac_str.trim_start_matches("0.").trim_end_matches('0');
-            return (int_str, trimmed_frac.to_string());
-        } else {
-            return (format!("{:.0}", int_val), "".to_string());
+fn extract_int_and_frac(abs_str: &str, _f64_val: f64) -> (String, String) {
+    let lower = abs_str.to_lowercase();
+    if lower == "nan" || lower == "inf" || lower == "infinity" {
+        return (abs_str.to_string(), "".to_string());
+    }
+
+    if lower.contains('e') {
+        // Expand scientific notation accurately into exact decimal integer and fraction strings
+        if let Some((mantissa, exp_s)) = lower.split_once('e') {
+            if let Ok(exp) = exp_s.parse::<i32>() {
+                let (int_part, frac_part) = if let Some((i, f)) = mantissa.split_once('.') {
+                    (i, f)
+                } else {
+                    (mantissa, "")
+                };
+
+                let combined_digits = format!("{}{}", int_part, frac_part);
+                let original_dot_pos = int_part.len() as i32;
+                let new_dot_pos = original_dot_pos + exp;
+
+                if new_dot_pos <= 0 {
+                    let leading_zeros = (-new_dot_pos) as usize;
+                    let zeros = "0".repeat(leading_zeros);
+                    let frac = format!("{}{}", zeros, combined_digits);
+                    let trimmed_frac = frac.trim_end_matches('0');
+                    return ("0".to_string(), if trimmed_frac.is_empty() { "0".to_string() } else { trimmed_frac.to_string() });
+                } else {
+                    let dot_idx = new_dot_pos as usize;
+                    if dot_idx < combined_digits.len() {
+                        let int_p = &combined_digits[..dot_idx];
+                        let clean_int = int_p.trim_start_matches('0');
+                        let frac_p = combined_digits[dot_idx..].trim_end_matches('0');
+                        return (
+                            if clean_int.is_empty() { "0".to_string() } else { clean_int.to_string() },
+                            frac_p.to_string(),
+                        );
+                    } else {
+                        let trailing_zeros = dot_idx - combined_digits.len();
+                        let int_p = format!("{}{}", combined_digits, "0".repeat(trailing_zeros));
+                        let clean_int = int_p.trim_start_matches('0');
+                        return (
+                            if clean_int.is_empty() { "0".to_string() } else { clean_int.to_string() },
+                            "".to_string(),
+                        );
+                    }
+                }
+            }
         }
     }
 
     if let Some((int_s, frac_s)) = abs_str.split_once('.') {
-        let clean_int = if int_s.is_empty() { "0" } else { int_s };
+        let clean_int = if int_s.is_empty() { "0" } else { int_s.trim_start_matches('0') };
+        let final_int = if clean_int.is_empty() { "0" } else { clean_int };
         let clean_frac = frac_s.trim_end_matches('0');
-        (clean_int.to_string(), clean_frac.to_string())
+        (final_int.to_string(), clean_frac.to_string())
     } else {
-        (abs_str.to_string(), "".to_string())
+        let clean_int = abs_str.trim_start_matches('0');
+        let final_int = if clean_int.is_empty() { "0" } else { clean_int };
+        (final_int.to_string(), "".to_string())
     }
 }

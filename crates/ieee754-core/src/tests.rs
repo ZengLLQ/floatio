@@ -118,4 +118,65 @@ mod tests {
         assert_eq!(res_underflow.category, NumberCategory::Zero);
         assert_eq!(res_underflow.hex_string, "0x00000000");
     }
+
+    #[test]
+    fn test_g_guard_round_sticky_rounding_0_1() {
+        let res = convert("0.1", Precision::Single).expect("0.1 single conversion");
+        // For 0.1, the unrounded candidate bits are 10011001100110011001100 with Guard=1, Round=1, Sticky=1
+        assert_eq!(res.step6.guard_bit, Some('1'));
+        assert_eq!(res.step6.round_bit, Some('1'));
+        assert_eq!(res.step6.sticky_bit, Some('1'));
+        assert!(res.step6.did_round);
+        assert_eq!(res.step6.final_fraction_bits, "10011001100110011001101");
+        assert_eq!(res.hex_string, "0x3DCCCCCD");
+    }
+
+    #[test]
+    fn test_h_long_fraction_pi() {
+        let res = convert("3.141592653589793", Precision::Single).expect("pi conversion");
+        // Ensure all integer bits in the multiplication table are binary digits (0 or 1)
+        for row in &res.step3.fractional_multiplication_rows {
+            assert!(row.integer_bit == "0" || row.integer_bit == "1", "Integer bit must be 0 or 1, got {}", row.integer_bit);
+        }
+        assert_eq!(res.hex_string, format!("0x{:08X}", (3.141592653589793_f32).to_bits()));
+    }
+
+    #[test]
+    fn test_i_scientific_notation_1_25e_minus_10() {
+        let res = convert("1.25e-10", Precision::Single).expect("1.25e-10 single conversion");
+        assert_eq!(res.step4.unbiased_exponent, -33);
+        assert_eq!(res.sign_bit, 0);
+        assert_eq!(res.hex_string, format!("0x{:08X}", (1.25e-10_f32).to_bits()));
+    }
+
+    #[test]
+    fn test_j_clean_step3_fractional_part_126_25() {
+        let res = convert("126.25", Precision::Single).expect("126.25 single");
+        assert_eq!(res.step3.fractional_part_dec, "25");
+        assert_eq!(res.step3.integer_part_dec, "126");
+    }
+
+    #[test]
+    fn test_k_double_precision_126_12() {
+        let res = convert("126.12", Precision::Double).expect("126.12 double should succeed");
+        assert_eq!(res.sign_bit, 0);
+        let expected_f64_bits = 126.12_f64.to_bits();
+        assert_eq!(res.bits_raw, expected_f64_bits);
+        assert_eq!(res.hex_string, format!("0x{:016X}", expected_f64_bits));
+    }
+
+    #[test]
+    fn test_l_step_field_types_u32() {
+        let res = convert("126.12", Precision::Double).expect("126.12 double should succeed");
+        assert_eq!(res.step1.total_bits, 64u32);
+        assert_eq!(res.step1.sign_bits, 1u32);
+        assert_eq!(res.step1.exponent_bits, 11u32);
+        assert_eq!(res.step1.fraction_bits, 52u32);
+        assert_eq!(res.step6.target_bit_length, 52u32);
+        assert!(!res.step3.fractional_multiplication_rows.is_empty());
+        assert_eq!(res.step3.fractional_multiplication_rows[0].step, 1u32);
+        assert_eq!(res.step8.nibbles.len(), 16);
+        assert_eq!(res.step8.nibbles[0].index, 1u32);
+        assert_eq!(res.step8.nibbles[15].index, 16u32);
+    }
 }

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ConversionResult } from '../types';
 import { Copy, Check, Info } from 'lucide-react';
+import { formatNibbles } from '../utils/format';
 
 interface BitVisualizationProps {
   result: ConversionResult;
@@ -13,7 +14,7 @@ export const BitVisualization: React.FC<BitVisualizationProps> = ({ result }) =>
   const signBit = result.step7.sign_bit;
   const expBits = result.step7.exponent_bits;
   const fracBits = result.step7.fraction_bits;
-  const totalBits = result.step1.total_bits;
+  const totalBits = Number(result.step1.total_bits);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(result.bit_pattern);
@@ -39,7 +40,7 @@ export const BitVisualization: React.FC<BitVisualizationProps> = ({ result }) =>
         return {
           title: `Fraction / Mantissa (${fracBits.length} bits)`,
           range: `Bits ${totalBits - 2 - expBits.length} to 0`,
-          desc: `Stores the fractional significand bits after the implicit leading bit (1 for normal numbers, 0 for subnormal). Stored: ${fracBits}.`,
+          desc: `Stores the fractional significand bits after the implicit leading bit (1 for normal numbers, 0 for subnormal). Stored bits: ${formatNibbles(fracBits)}.`,
         };
       default:
         return null;
@@ -109,7 +110,7 @@ export const BitVisualization: React.FC<BitVisualizationProps> = ({ result }) =>
             type="button"
             onClick={() => setSelectedField(selectedField === 'exponent' ? null : 'exponent')}
             style={{ flex: `${expBits.length} ${expBits.length} ${(expBits.length / totalBits) * 100}%` }}
-            className={`rounded-xl flex items-center justify-center font-bold text-sm tracking-wider transition-all duration-150 ${
+            className={`rounded-xl flex items-center justify-center font-bold text-sm tracking-wider transition-all duration-150 min-w-0 truncate px-2 ${
               selectedField === 'exponent'
                 ? 'bg-[#ECDFCC] text-[#181C14] ring-2 ring-[#ECDFCC]'
                 : 'bg-[#697565] text-[#181C14] hover:bg-[#697565]/80'
@@ -124,7 +125,7 @@ export const BitVisualization: React.FC<BitVisualizationProps> = ({ result }) =>
             type="button"
             onClick={() => setSelectedField(selectedField === 'fraction' ? null : 'fraction')}
             style={{ flex: `${fracBits.length} ${fracBits.length} ${(fracBits.length / totalBits) * 100}%` }}
-            className={`rounded-xl flex items-center justify-center font-bold text-sm tracking-wider transition-all duration-150 ${
+            className={`rounded-xl flex items-center justify-center font-bold text-sm tracking-wider transition-all duration-150 min-w-0 truncate px-2 ${
               selectedField === 'fraction'
                 ? 'bg-[#ECDFCC] text-[#181C14] ring-2 ring-[#ECDFCC]'
                 : 'bg-[#3C3D37] text-[#ECDFCC] hover:bg-[#3C3D37]/80'
@@ -160,12 +161,12 @@ export const BitVisualization: React.FC<BitVisualizationProps> = ({ result }) =>
           Encoded Bit Stream
         </span>
 
-        <div className="p-6 rounded-2xl bg-[#181C14] border border-[#3C3D37] space-y-6">
-          <div className="flex flex-wrap items-center gap-4 text-2xl sm:text-3xl md:text-4xl font-bold tracking-widest tabular-nums">
+        <div className="p-6 rounded-2xl bg-[#181C14] border border-[#3C3D37] overflow-x-auto scrollbar-thin min-w-0">
+          <div className="flex items-center gap-4 text-xl sm:text-2xl md:text-3xl font-bold tracking-widest tabular-nums whitespace-nowrap min-w-max">
             {/* Sign Bit */}
             <div className="flex flex-col items-center">
-              <span className="text-xs uppercase text-[#697565] tracking-widest mb-1">Sign</span>
-              <span className="px-3 py-1.5 rounded-xl bg-[#697565]/30 text-[#ECDFCC] border border-[#697565]/40">
+              <span className="text-xs uppercase text-[#697565] tracking-widest mb-1 font-sans">Sign</span>
+              <span className="px-3 py-1.5 rounded-xl bg-[#697565]/30 text-[#ECDFCC] border border-[#697565]/40 font-mono">
                 {signBit}
               </span>
             </div>
@@ -174,10 +175,10 @@ export const BitVisualization: React.FC<BitVisualizationProps> = ({ result }) =>
 
             {/* Exponent Bits */}
             <div className="flex flex-col items-center">
-              <span className="text-xs uppercase text-[#697565] tracking-widest mb-1">
+              <span className="text-xs uppercase text-[#697565] tracking-widest mb-1 font-sans">
                 Exponent ({expBits.length}b)
               </span>
-              <span className="px-4 py-1.5 rounded-xl bg-[#697565] text-[#181C14] font-bold">
+              <span className="px-4 py-1.5 rounded-xl bg-[#697565] text-[#181C14] font-bold font-mono">
                 {expBits}
               </span>
             </div>
@@ -185,12 +186,12 @@ export const BitVisualization: React.FC<BitVisualizationProps> = ({ result }) =>
             <span className="text-[#3C3D37] text-2xl select-none">|</span>
 
             {/* Fraction Bits */}
-            <div className="flex flex-col items-start flex-1 min-w-[240px]">
-              <span className="text-xs uppercase text-[#697565] tracking-widest mb-1">
+            <div className="flex flex-col items-start">
+              <span className="text-xs uppercase text-[#697565] tracking-widest mb-1 font-sans">
                 Fraction ({fracBits.length}b)
               </span>
-              <span className="px-4 py-1.5 rounded-xl bg-[#3C3D37] text-[#ECDFCC] font-semibold break-all tracking-wider text-xl sm:text-2xl md:text-3xl">
-                {fracBits}
+              <span className="px-4 py-1.5 rounded-xl bg-[#3C3D37] text-[#ECDFCC] font-semibold tracking-wider text-base sm:text-lg md:text-xl font-mono whitespace-nowrap">
+                {formatNibbles(fracBits)}
               </span>
             </div>
           </div>

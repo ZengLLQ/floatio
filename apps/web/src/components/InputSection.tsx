@@ -8,10 +8,12 @@ interface InputSectionProps {
   precision: Precision;
   setPrecision: (p: Precision) => void;
   onConvert: () => void;
+  onSelectExample?: (val: string) => void;
   error: string | null;
 }
 
 const PRESET_EXAMPLES = [
+  { label: '126.12', desc: 'Double precision 64-bit' },
   { label: '126.25', desc: 'Standard decimal' },
   { label: '0.1', desc: 'Repeating binary fraction' },
   { label: '-13.5', desc: 'Negative value' },
@@ -28,6 +30,7 @@ export const InputSection: React.FC<InputSectionProps> = ({
   precision,
   setPrecision,
   onConvert,
+  onSelectExample,
   error,
 }) => {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -138,7 +141,11 @@ export const InputSection: React.FC<InputSectionProps> = ({
                 key={item.label}
                 type="button"
                 onClick={() => {
-                  setInputVal(item.label);
+                  if (onSelectExample) {
+                    onSelectExample(item.label);
+                  } else {
+                    setInputVal(item.label);
+                  }
                 }}
                 className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all duration-150 ${
                   inputVal === item.label

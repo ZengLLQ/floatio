@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { ConversionResult } from '../types';
 import { MathView } from './MathView';
 import { HexReferenceTable } from './HexReferenceTable';
-import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, CheckCircle2 } from 'lucide-react';
+import { BinaryPointNormalizer } from './BinaryPointNormalizer';
+import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, CheckCircle2, Copy, Check } from 'lucide-react';
+import { formatNibbles } from '../utils/format';
 
 interface StepSectionProps {
   result: ConversionResult;
@@ -10,6 +12,44 @@ interface StepSectionProps {
 
 export const StepSection: React.FC<StepSectionProps> = ({ result }) => {
   const [activeStep, setActiveStep] = useState<number>(1);
+  const [copiedNormalizedStep4, setCopiedNormalizedStep4] = useState<boolean>(false);
+  const [copiedHexStep8, setCopiedHexStep8] = useState<boolean>(false);
+  const [copiedHexStep9, setCopiedHexStep9] = useState<boolean>(false);
+  const [copiedBitsStep7, setCopiedBitsStep7] = useState<boolean>(false);
+  const [copiedFractionStep6, setCopiedFractionStep6] = useState<boolean>(false);
+  const [copiedDecimalStep9, setCopiedDecimalStep9] = useState<boolean>(false);
+
+  const renderNormalizedForm = (form: string) => {
+    if (!form) return null;
+    const match = form.match(/^(.*?)\s*(?:×|\\times|\\cdot|\*)\s*2\^\{?\+?(-?\d+)\}?$/);
+    if (match) {
+      const [, significand, exp] = match;
+      const cleanSig = significand.replace(/(?:₂|_2)$/, '').trim();
+      return (
+        <span className="inline-flex items-baseline gap-1.5 whitespace-nowrap">
+          <span className="font-mono text-[#ECDFCC]">{formatNibbles(cleanSig)}₂</span>
+          <span className="text-[#ECDFCC]/70 font-sans font-normal">×</span>
+          <span className="font-mono text-[#ECDFCC]">
+            2<sup className="text-sm font-bold text-[#ECDFCC] ml-0.5">{exp}</sup>
+          </span>
+        </span>
+      );
+    }
+    // Clean any unformatted curly braces from LaTeX exponents e.g. 2^{6} -> 2^6
+    const cleaned = form.replace(/2\^\{?\+?(-?\d+)\}?/g, '2^$1');
+    return <span className="font-mono text-[#ECDFCC]">{cleaned}</span>;
+  };
+
+  const renderSignificand = (sig: string) => {
+    if (!sig) return '';
+    if (sig === '∞' || sig === 'NaN' || sig === '-Infinity') return sig;
+    const clean = sig
+      .replace(/\s*(?:×|\\times|\\cdot|\*)\s*2\^?.*$/, '')
+      .replace(/(?:₂|_2)$/, '')
+      .trim();
+    const formatted = formatNibbles(clean);
+    return formatted.endsWith('₂') ? formatted : `${formatted}₂`;
+  };
   const [expandedSteps, setExpandedSteps] = useState<Record<number, boolean>>({
     1: true,
     2: true,
@@ -137,14 +177,16 @@ export const StepSection: React.FC<StepSectionProps> = ({ result }) => {
 
               {/* Parameter Table & KaTeX Equation */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="p-6 rounded-2xl bg-[#3C3D37]/20 border border-[#3C3D37] space-y-4">
+                <div className="p-6 rounded-2xl bg-[#3C3D37]/20 border border-[#3C3D37] space-y-4 min-w-0">
                   <h4 className="text-sm font-semibold uppercase tracking-wider text-[#697565]">
                     Format Specification
                   </h4>
                   <ul className="space-y-2.5 text-base text-[#ECDFCC]/90">
-                    <li className="flex justify-between border-b border-[#3C3D37]/40 pb-2">
-                      <span className="text-[#ECDFCC]/60">Original Decimal Input:</span>
-                      <span className="font-bold text-[#ECDFCC]">{result.raw_input}</span>
+                    <li className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-[#3C3D37]/40 pb-2 min-w-0">
+                      <span className="text-[#ECDFCC]/60 flex-shrink-0">Original Decimal Input:</span>
+                      <div className="overflow-x-auto scrollbar-thin min-w-0 text-left sm:text-right">
+                        <span className="font-bold text-[#ECDFCC] font-mono whitespace-nowrap">{result.raw_input}</span>
+                      </div>
                     </li>
                     <li className="flex justify-between border-b border-[#3C3D37]/40 pb-2">
                       <span className="text-[#ECDFCC]/60">Selected Precision:</span>
@@ -173,7 +215,7 @@ export const StepSection: React.FC<StepSectionProps> = ({ result }) => {
                   </ul>
                 </div>
 
-                <div className="p-6 rounded-2xl bg-[#3C3D37]/20 border border-[#3C3D37] flex flex-col justify-center space-y-4">
+                <div className="p-6 rounded-2xl bg-[#3C3D37]/20 border border-[#3C3D37] flex flex-col justify-center space-y-4 min-w-0">
                   <h4 className="text-sm font-semibold uppercase tracking-wider text-[#697565]">
                     Mathematical Definition
                   </h4>
@@ -218,14 +260,14 @@ export const StepSection: React.FC<StepSectionProps> = ({ result }) => {
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="p-6 rounded-2xl bg-[#3C3D37]/20 border border-[#3C3D37] space-y-4">
+                <div className="p-6 rounded-2xl bg-[#3C3D37]/20 border border-[#3C3D37] space-y-4 min-w-0">
                   <h4 className="text-sm font-semibold uppercase tracking-wider text-[#697565]">
                     Sign Determination Rule
                   </h4>
                   <MathView math={result.step2.latex_formula} display />
                 </div>
 
-                <div className="p-6 rounded-2xl bg-[#3C3D37]/20 border border-[#3C3D37] space-y-4">
+                <div className="p-6 rounded-2xl bg-[#3C3D37]/20 border border-[#3C3D37] space-y-4 min-w-0">
                   <h4 className="text-sm font-semibold uppercase tracking-wider text-[#697565]">
                     Evaluation for Input
                   </h4>
@@ -310,13 +352,18 @@ export const StepSection: React.FC<StepSectionProps> = ({ result }) => {
                   </div>
                 )}
 
-                <div className="p-4 rounded-xl bg-[#3C3D37]/20 border border-[#3C3D37] flex items-center justify-between">
-                  <span className="text-sm font-semibold uppercase tracking-wider text-[#697565]">
-                    Integer Binary Result
-                  </span>
-                  <span className="text-2xl font-bold text-[#ECDFCC] tabular-nums tracking-wider">
-                    {result.step3.integer_binary}₂
-                  </span>
+                <div className="p-4 rounded-xl bg-[#181C14] border border-[#3C3D37] space-y-2 min-w-0">
+                  <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-[#697565]">
+                    <span>Integer Binary Result</span>
+                    <span className="font-mono text-[#ECDFCC]/60">
+                      {result.step3.integer_binary.replace(/[\s_]/g, '').length} bits
+                    </span>
+                  </div>
+                  <div className="overflow-x-auto scrollbar-thin py-1 min-w-0">
+                    <span className="text-xl sm:text-2xl font-bold text-[#ECDFCC] tabular-nums tracking-wider font-mono whitespace-nowrap block">
+                      {formatNibbles(result.step3.integer_binary, { alignRight: true })}₂
+                    </span>
+                  </div>
                 </div>
               </div>
 
@@ -324,7 +371,7 @@ export const StepSection: React.FC<StepSectionProps> = ({ result }) => {
               <div className="space-y-4 pt-4 border-t border-[#3C3D37]/40">
                 <div className="flex items-center justify-between">
                   <h4 className="text-xl font-bold text-[#ECDFCC]">
-                    Part B: Fractional Part (0.{result.step3.fractional_part_dec || '0'}₁₀)
+                    Part B: Fractional Part (0.{result.step3.fractional_part_dec && result.step3.fractional_part_dec !== '0' ? result.step3.fractional_part_dec : '0'}₁₀)
                   </h4>
                   <span className="text-xs text-[#697565] uppercase font-semibold">
                     Read Integer Bits: Top → Bottom
@@ -364,13 +411,16 @@ export const StepSection: React.FC<StepSectionProps> = ({ result }) => {
                   </div>
                 )}
 
-                <div className="p-4 rounded-xl bg-[#3C3D37]/20 border border-[#3C3D37] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <span className="text-sm font-semibold uppercase tracking-wider text-[#697565]">
-                    Unnormalized Combined Binary
-                  </span>
-                  <span className="text-2xl font-bold text-[#ECDFCC] tabular-nums tracking-wider break-all">
-                    {result.step3.combined_binary_unnormalized}₂
-                  </span>
+                <div className="p-4 rounded-xl bg-[#181C14] border border-[#3C3D37] space-y-2 min-w-0">
+                  <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-[#697565]">
+                    <span>Unnormalized Combined Binary</span>
+                    <span className="font-mono text-[#ECDFCC]/60">Integer + Fraction</span>
+                  </div>
+                  <div className="overflow-x-auto scrollbar-thin py-1 min-w-0">
+                    <span className="text-xl sm:text-2xl font-bold text-[#ECDFCC] tabular-nums tracking-wider font-mono whitespace-nowrap block">
+                      {formatNibbles(result.step3.combined_binary_unnormalized)}₂
+                    </span>
+                  </div>
                 </div>
 
                 <p className="text-sm text-[#ECDFCC]/70 italic">
@@ -414,45 +464,122 @@ export const StepSection: React.FC<StepSectionProps> = ({ result }) => {
                 Normalization repositions the binary point so that exactly one non-zero bit (the hidden bit 1) precedes the binary point:
               </p>
 
+              {/* Interactive Visual Movement of the Binary Point */}
+              <BinaryPointNormalizer
+                binaryBefore={result.step4.binary_before}
+                unbiasedExp={result.step4.unbiased_exponent}
+                shiftAmount={result.step4.shift_amount}
+                shiftDirection={result.step4.shift_direction}
+                normalizedForm={result.step4.normalized_form}
+                hiddenBit={result.step4.hidden_bit}
+                isSubnormal={result.step4.is_subnormal}
+              />
+
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="p-6 rounded-2xl bg-[#3C3D37]/20 border border-[#3C3D37] space-y-4">
+                <div className="p-6 rounded-2xl bg-[#3C3D37]/20 border border-[#3C3D37] space-y-4 min-w-0">
                   <h4 className="text-sm font-semibold uppercase tracking-wider text-[#697565]">
                     Binary Point Transformation
                   </h4>
                   <MathView math={result.step4.latex_substitution} display />
                 </div>
 
-                <div className="p-6 rounded-2xl bg-[#3C3D37]/20 border border-[#3C3D37] space-y-4">
-                  <h4 className="text-sm font-semibold uppercase tracking-wider text-[#697565]">
-                    Normalization Result
-                  </h4>
-                  <div className="space-y-3">
-                    <div className="flex justify-between border-b border-[#3C3D37]/40 pb-2">
-                      <span className="text-[#ECDFCC]/60">Normalized Form:</span>
-                      <span className="font-bold text-[#ECDFCC] text-lg tabular-nums">
-                        {result.step4.normalized_form}
-                      </span>
+                <div className="p-6 rounded-2xl bg-[#3C3D37]/20 border border-[#3C3D37] space-y-5 min-w-0">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-sm font-semibold uppercase tracking-wider text-[#697565]">
+                      Normalization Result
+                    </h4>
+                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#3C3D37] text-[#ECDFCC] font-mono">
+                      e = {result.step4.unbiased_exponent}
+                    </span>
+                  </div>
+
+                  {/* Self-contained Full-Width Normalized Form Card */}
+                  <div className="p-4 rounded-xl bg-[#181C14] border border-[#3C3D37] space-y-2 min-w-0">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-semibold uppercase tracking-wider text-[#697565]">
+                          Normalized Form
+                        </span>
+                        <span className="text-xs font-mono text-[#ECDFCC]/60">
+                          {result.step4.is_subnormal ? '0.F₂ × 2ᵉ' : '1.F₂ × 2ᵉ'}
+                        </span>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const cleanForm = result.step4.normalized_form.replace(/2\^\{?\+?(-?\d+)\}?/g, '2^$1');
+                          navigator.clipboard.writeText(cleanForm);
+                          setCopiedNormalizedStep4(true);
+                          setTimeout(() => setCopiedNormalizedStep4(false), 2000);
+                        }}
+                        title="Copy Normalized Form"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#3C3D37]/50 hover:bg-[#3C3D37] text-[#ECDFCC] text-xs font-semibold uppercase tracking-wider border border-[#3C3D37] transition-colors flex-shrink-0"
+                      >
+                        {copiedNormalizedStep4 ? (
+                          <>
+                            <Check className="w-3.5 h-3.5 text-emerald-400" />
+                            <span className="text-emerald-400">Copied</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-3.5 h-3.5 text-[#697565]" />
+                            <span>Copy Form</span>
+                          </>
+                        )}
+                      </button>
                     </div>
-                    <div className="flex justify-between border-b border-[#3C3D37]/40 pb-2">
-                      <span className="text-[#ECDFCC]/60">Unbiased Exponent (e):</span>
-                      <span className="font-bold text-[#ECDFCC] text-lg tabular-nums">
+                    <div className="overflow-x-auto scrollbar-thin py-2 min-w-0">
+                      <div className="font-mono text-base sm:text-lg md:text-xl font-bold text-[#ECDFCC] tabular-nums whitespace-nowrap tracking-wide">
+                        {renderNormalizedForm(result.step4.normalized_form)}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Detail Parameter Cards */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="p-3.5 rounded-xl bg-[#181C14] border border-[#3C3D37] min-w-0">
+                      <span className="text-xs uppercase tracking-wider text-[#697565] block mb-1">
+                        Unbiased Exponent (e)
+                      </span>
+                      <span className="text-xl font-bold text-[#ECDFCC] tabular-nums font-mono block">
                         {result.step4.unbiased_exponent}
                       </span>
                     </div>
-                    <div className="flex justify-between border-b border-[#3C3D37]/40 pb-2">
-                      <span className="text-[#ECDFCC]/60">Implicit (Hidden) Bit:</span>
-                      <span className="font-bold text-[#ECDFCC] text-lg">
+
+                    <div className="p-3.5 rounded-xl bg-[#181C14] border border-[#3C3D37] min-w-0">
+                      <span className="text-xs uppercase tracking-wider text-[#697565] block mb-1">
+                        Implicit Bit
+                      </span>
+                      <span className="text-xl font-bold text-[#ECDFCC] tabular-nums font-mono block">
                         {result.step4.hidden_bit}
                       </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-[#ECDFCC]/60">Shift Amount & Direction:</span>
-                      <span className="font-bold text-[#ECDFCC]">
-                        {result.step4.shift_amount} positions {result.step4.shift_direction}
+
+                    <div className="p-3.5 rounded-xl bg-[#181C14] border border-[#3C3D37] min-w-0">
+                      <span className="text-xs uppercase tracking-wider text-[#697565] block mb-1">
+                        Shift
+                      </span>
+                      <span
+                        className="text-sm sm:text-base font-bold text-[#ECDFCC] block truncate"
+                        title={
+                          result.step4.is_subnormal
+                            ? 'Subnormal (Fixed leading bit 0)'
+                            : result.step4.shift_amount === 0
+                            ? 'Zero shift required'
+                            : `${result.step4.shift_amount} positions ${result.step4.shift_direction}`
+                        }
+                      >
+                        {result.step4.is_subnormal
+                          ? 'Subnormal'
+                          : result.step4.shift_amount === 0
+                          ? 'None (e = 0)'
+                          : `${result.step4.shift_amount} pos ${result.step4.shift_direction}`}
                       </span>
                     </div>
                   </div>
-                  <p className="text-sm text-[#ECDFCC]/70 pt-2 leading-relaxed">
+
+                  <p className="text-sm text-[#ECDFCC]/70 pt-1 leading-relaxed">
                     {result.step4.explanation}
                   </p>
                 </div>
@@ -495,7 +622,7 @@ export const StepSection: React.FC<StepSectionProps> = ({ result }) => {
               </p>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="p-6 rounded-2xl bg-[#3C3D37]/20 border border-[#3C3D37] space-y-4">
+                <div className="p-6 rounded-2xl bg-[#3C3D37]/20 border border-[#3C3D37] space-y-4 min-w-0">
                   <h4 className="text-sm font-semibold uppercase tracking-wider text-[#697565]">
                     Exponent Bias Formula
                   </h4>
@@ -507,7 +634,7 @@ export const StepSection: React.FC<StepSectionProps> = ({ result }) => {
                 </div>
 
                 {/* Repeated division by 2 table for biased exponent */}
-                <div className="p-6 rounded-2xl bg-[#3C3D37]/20 border border-[#3C3D37] space-y-4">
+                <div className="p-6 rounded-2xl bg-[#3C3D37]/20 border border-[#3C3D37] space-y-4 min-w-0">
                   <div className="flex items-center justify-between">
                     <h4 className="text-sm font-semibold uppercase tracking-wider text-[#697565]">
                       Biased Exponent to Binary ({result.step5.biased_exponent}₁₀)
@@ -538,13 +665,18 @@ export const StepSection: React.FC<StepSectionProps> = ({ result }) => {
                     </table>
                   </div>
 
-                  <div className="pt-2 flex justify-between items-center border-t border-[#3C3D37]/40">
-                    <span className="text-xs uppercase text-[#697565] font-semibold">
-                      Exponent Field (E)
-                    </span>
-                    <span className="text-xl font-bold text-[#ECDFCC] tabular-nums tracking-widest">
-                      {result.step5.exponent_binary}₂
-                    </span>
+                  <div className="p-4 rounded-xl bg-[#181C14] border border-[#3C3D37] space-y-2 min-w-0">
+                    <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-[#697565]">
+                      <span>Biased Exponent Field (E)</span>
+                      <span className="font-mono text-[#ECDFCC]/60">
+                        {result.step1.exponent_bits} bits
+                      </span>
+                    </div>
+                    <div className="overflow-x-auto scrollbar-thin py-1 min-w-0">
+                      <span className="text-xl sm:text-2xl font-bold text-[#ECDFCC] tabular-nums tracking-widest font-mono whitespace-nowrap block">
+                        {formatNibbles(result.step5.exponent_binary)}₂
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -585,33 +717,152 @@ export const StepSection: React.FC<StepSectionProps> = ({ result }) => {
                 For normal numbers, the leading bit `1` is implicit and omitted. The remaining bits form the fraction field, padded with zeros or rounded via IEEE 754 round-to-nearest, ties-to-even.
               </p>
 
-              <div className="p-6 rounded-2xl bg-[#3C3D37]/20 border border-[#3C3D37] space-y-5">
-                <div className="space-y-3">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#3C3D37]/40 pb-3">
-                    <span className="text-sm font-semibold uppercase tracking-wider text-[#697565]">
+              <div className="p-6 rounded-2xl bg-[#3C3D37]/20 border border-[#3C3D37] space-y-6 min-w-0">
+                <div className="space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-4 rounded-xl bg-[#181C14] border border-[#3C3D37] min-w-0">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-[#697565]">
                       Target Fraction Width
                     </span>
-                    <span className="text-lg font-bold text-[#ECDFCC]">
-                      {result.step6.target_bit_length} bits
+                    <span className="text-base sm:text-lg font-bold text-[#ECDFCC] font-mono">
+                      {result.step6.target_bit_length} bits ({result.precision} Precision)
                     </span>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#3C3D37]/40 pb-3">
-                    <span className="text-sm font-semibold uppercase tracking-wider text-[#697565]">
-                      Normalized Significand (with implicit bit)
-                    </span>
-                    <span className="text-base font-semibold text-[#ECDFCC] tabular-nums">
-                      {result.step6.significand_with_hidden}
-                    </span>
+                  <div className="p-4 rounded-xl bg-[#181C14] border border-[#3C3D37] space-y-2 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-[#697565]">
+                        Normalized Significand (with implicit bit)
+                      </span>
+                      <span className="text-xs text-[#ECDFCC]/60 font-mono">
+                        Hidden {result.step4.hidden_bit} + {result.step6.target_bit_length}b fraction
+                      </span>
+                    </div>
+                    <div className="overflow-x-auto scrollbar-thin py-1 min-w-0">
+                      <span className="text-base sm:text-lg font-bold text-[#ECDFCC] tabular-nums font-mono whitespace-nowrap block">
+                        {renderSignificand(result.step6.significand_with_hidden)}
+                      </span>
+                    </div>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 pt-1">
-                    <span className="text-sm font-semibold uppercase tracking-wider text-[#697565]">
-                      Final Stored Fraction Bits ({result.step6.target_bit_length}b)
-                    </span>
-                    <span className="text-xl md:text-2xl font-bold text-[#ECDFCC] tabular-nums tracking-wider break-all max-w-xl text-right">
-                      {result.step6.final_fraction_bits}
-                    </span>
+                  <div className="p-4 rounded-xl bg-[#181C14] border border-[#3C3D37] space-y-2 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-[#697565]">
+                        Candidate Unrounded Fraction
+                      </span>
+                      <span className="text-xs text-[#ECDFCC]/60 font-mono">
+                        Raw fraction bits
+                      </span>
+                    </div>
+                    <div className="overflow-x-auto scrollbar-thin py-1 min-w-0">
+                      <span className="text-base sm:text-lg font-bold text-[#ECDFCC]/90 tabular-nums font-mono whitespace-nowrap block">
+                        {formatNibbles(result.step6.raw_fraction_bits)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Guard, Round, Sticky Bit Callout Cards */}
+                  {result.step6.guard_bit && (
+                    <div className="pt-2 pb-1 space-y-3">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-[#697565] block">
+                        IEEE 754 Discarded Bits Analysis
+                      </span>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div className="p-3.5 rounded-xl bg-[#181C14] border border-[#3C3D37] flex items-center justify-between">
+                          <div>
+                            <span className="text-xs uppercase text-[#697565] font-semibold block">Guard Bit (G)</span>
+                            <span className="text-xs text-[#ECDFCC]/60">First discarded bit</span>
+                          </div>
+                          <span className="text-2xl font-bold text-[#ECDFCC] tabular-nums px-2 py-0.5 rounded bg-[#3C3D37]/60">
+                            {result.step6.guard_bit}
+                          </span>
+                        </div>
+
+                        <div className="p-3.5 rounded-xl bg-[#181C14] border border-[#3C3D37] flex items-center justify-between">
+                          <div>
+                            <span className="text-xs uppercase text-[#697565] font-semibold block">Round Bit (R)</span>
+                            <span className="text-xs text-[#ECDFCC]/60">Second discarded bit</span>
+                          </div>
+                          <span className="text-2xl font-bold text-[#ECDFCC] tabular-nums px-2 py-0.5 rounded bg-[#3C3D37]/60">
+                            {result.step6.round_bit}
+                          </span>
+                        </div>
+
+                        <div className="p-3.5 rounded-xl bg-[#181C14] border border-[#3C3D37] flex items-center justify-between">
+                          <div>
+                            <span className="text-xs uppercase text-[#697565] font-semibold block">Sticky Bit (S)</span>
+                            <span className="text-xs text-[#ECDFCC]/60">OR of remaining bits</span>
+                          </div>
+                          <span className="text-2xl font-bold text-[#ECDFCC] tabular-nums px-2 py-0.5 rounded bg-[#3C3D37]/60">
+                            {result.step6.sticky_bit}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Rounding Status Pill */}
+                      <div className="flex flex-wrap items-center gap-3 pt-1">
+                        <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
+                          result.step6.did_round
+                            ? 'bg-amber-950/80 border border-amber-800 text-amber-300'
+                            : 'bg-emerald-950/80 border border-emerald-800 text-emerald-300'
+                        }`}>
+                          {result.step6.did_round ? 'Rounded Up (+1 to Fraction)' : 'Truncated / Exact (No Increment)'}
+                        </span>
+
+                        {result.step6.round_caused_exponent_increment && (
+                          <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-purple-950/80 border border-purple-800 text-purple-300">
+                            Biased Exponent Incremented by Carry (+1 to E)
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Mathematical Derivation */}
+                  {result.step6.latex_formula && (
+                    <div className="p-4 rounded-xl bg-[#181C14] border border-[#3C3D37] my-3">
+                      <MathView math={result.step6.latex_formula} display />
+                    </div>
+                  )}
+
+                  <div className="pt-3 border-t border-[#3C3D37]/40 space-y-3">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-semibold uppercase tracking-wider text-[#697565]">
+                          Final Stored Fraction Field ({result.step6.target_bit_length}b)
+                        </span>
+                        <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#3C3D37] text-[#ECDFCC]/80 font-mono font-medium">
+                          {result.step6.target_bit_length} bits · {Math.ceil(result.step6.target_bit_length / 4)} nibbles
+                        </span>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(result.step6.final_fraction_bits);
+                          setCopiedFractionStep6(true);
+                          setTimeout(() => setCopiedFractionStep6(false), 2000);
+                        }}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#3C3D37]/50 hover:bg-[#3C3D37] text-[#ECDFCC] text-xs font-semibold uppercase tracking-wider border border-[#3C3D37] transition-colors"
+                      >
+                        {copiedFractionStep6 ? (
+                          <>
+                            <Check className="w-3.5 h-3.5 text-emerald-400" />
+                            <span className="text-emerald-400">Copied</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-3.5 h-3.5 text-[#697565]" />
+                            <span>Copy Fraction</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-[#181C14] border border-[#3C3D37] overflow-x-auto scrollbar-thin min-w-0">
+                      <div className="font-mono text-base sm:text-lg md:text-xl font-bold text-[#ECDFCC] tabular-nums tracking-wider whitespace-nowrap">
+                        {formatNibbles(result.step6.final_fraction_bits)}
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -656,28 +907,74 @@ export const StepSection: React.FC<StepSectionProps> = ({ result }) => {
                 We concatenate the three fields: 1 bit for Sign, {result.step1.exponent_bits} bits for Biased Exponent, and {result.step1.fraction_bits} bits for Fraction.
               </p>
 
-              <div className="p-6 rounded-2xl bg-[#3C3D37]/20 border border-[#3C3D37] space-y-4">
-                <div className="flex flex-wrap items-center gap-4 text-2xl sm:text-3xl md:text-4xl font-bold tabular-nums">
-                  <span className="px-3 py-1 rounded-xl bg-[#697565]/30 text-[#ECDFCC] border border-[#697565]">
-                    {result.step7.sign_bit}
-                  </span>
-                  <span className="text-[#3C3D37]">+</span>
-                  <span className="px-3 py-1 rounded-xl bg-[#697565] text-[#181C14]">
-                    {result.step7.exponent_bits}
-                  </span>
-                  <span className="text-[#3C3D37]">+</span>
-                  <span className="px-3 py-1 rounded-xl bg-[#3C3D37] text-[#ECDFCC] break-all">
-                    {result.step7.fraction_bits}
-                  </span>
+              <div className="p-6 rounded-2xl bg-[#3C3D37]/20 border border-[#3C3D37] space-y-4 min-w-0">
+                <div className="overflow-x-auto scrollbar-thin pb-2 min-w-0">
+                  <div className="flex items-center gap-3 text-lg sm:text-xl md:text-2xl font-bold tabular-nums font-mono whitespace-nowrap min-w-max">
+                    <div className="flex flex-col items-center">
+                      <span className="text-[10px] uppercase tracking-wider text-[#697565] mb-1 font-sans">
+                        Sign (1b)
+                      </span>
+                      <span className="px-3 py-1.5 rounded-xl bg-[#697565]/30 text-[#ECDFCC] border border-[#697565]">
+                        {result.step7.sign_bit}
+                      </span>
+                    </div>
+
+                    <span className="text-[#3C3D37] text-2xl select-none">+</span>
+
+                    <div className="flex flex-col items-center">
+                      <span className="text-[10px] uppercase tracking-wider text-[#697565] mb-1 font-sans">
+                        Exponent ({result.step7.exponent_bits.length}b)
+                      </span>
+                      <span className="px-3 py-1.5 rounded-xl bg-[#697565] text-[#181C14]">
+                        {result.step7.exponent_bits}
+                      </span>
+                    </div>
+
+                    <span className="text-[#3C3D37] text-2xl select-none">+</span>
+
+                    <div className="flex flex-col items-start">
+                      <span className="text-[10px] uppercase tracking-wider text-[#697565] mb-1 font-sans">
+                        Fraction ({result.step7.fraction_bits.length}b)
+                      </span>
+                      <span className="px-4 py-1.5 rounded-xl bg-[#3C3D37] text-[#ECDFCC] font-mono tracking-wider whitespace-nowrap">
+                        {formatNibbles(result.step7.fraction_bits)}
+                      </span>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="pt-4 border-t border-[#3C3D37]/40 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-[#697565]">
-                    Complete 32/64-Bit Representation
-                  </span>
-                  <span className="text-xl font-bold text-[#ECDFCC] tabular-nums tracking-widest break-all">
-                    {result.step7.complete_bit_pattern}
-                  </span>
+                <div className="p-4 rounded-xl bg-[#181C14] border border-[#3C3D37] space-y-2 min-w-0">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-[#697565]">
+                      Complete {result.step1.total_bits}-Bit Representation
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(result.step7.complete_bit_pattern);
+                        setCopiedBitsStep7(true);
+                        setTimeout(() => setCopiedBitsStep7(false), 2000);
+                      }}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#3C3D37]/50 hover:bg-[#3C3D37] text-[#ECDFCC] text-xs font-bold uppercase tracking-wider border border-[#3C3D37] transition-colors flex-shrink-0"
+                    >
+                      {copiedBitsStep7 ? (
+                        <>
+                          <Check className="w-3.5 h-3.5 text-emerald-400" />
+                          <span className="text-emerald-400">Copied</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3.5 h-3.5 text-[#697565]" />
+                          <span>Copy Bits</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                  <div className="overflow-x-auto scrollbar-thin py-1 min-w-0">
+                    <span className="text-base sm:text-lg md:text-xl font-bold text-[#ECDFCC] tabular-nums font-mono tracking-wider whitespace-nowrap block">
+                      {formatNibbles(result.step7.complete_bit_pattern)}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -750,13 +1047,39 @@ export const StepSection: React.FC<StepSectionProps> = ({ result }) => {
                     </table>
                   </div>
 
-                  <div className="p-4 rounded-xl bg-[#3C3D37]/30 border border-[#3C3D37] flex items-center justify-between">
-                    <span className="text-sm font-semibold uppercase tracking-wider text-[#697565]">
-                      Hexadecimal Word
-                    </span>
-                    <span className="text-3xl font-bold text-[#ECDFCC] tracking-widest">
-                      {result.step8.hex_string}
-                    </span>
+                  <div className="p-4 rounded-xl bg-[#181C14] border border-[#3C3D37] space-y-2 min-w-0">
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-[#697565]">
+                        Hexadecimal Word
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(result.step8.hex_string);
+                          setCopiedHexStep8(true);
+                          setTimeout(() => setCopiedHexStep8(false), 2000);
+                        }}
+                        title="Copy Hexadecimal word"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#3C3D37]/50 hover:bg-[#3C3D37] text-[#ECDFCC] text-xs font-bold uppercase tracking-wider border border-[#3C3D37] transition-colors flex-shrink-0"
+                      >
+                        {copiedHexStep8 ? (
+                          <>
+                            <Check className="w-3.5 h-3.5 text-emerald-400" />
+                            <span className="text-emerald-400">Copied</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-3.5 h-3.5 text-[#697565]" />
+                            <span>Copy Hex</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                    <div className="overflow-x-auto scrollbar-thin py-1 min-w-0">
+                      <span className="text-2xl sm:text-3xl font-bold text-[#ECDFCC] tracking-widest font-mono whitespace-nowrap block">
+                        {result.step8.hex_string}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -798,65 +1121,115 @@ export const StepSection: React.FC<StepSectionProps> = ({ result }) => {
 
           {expandedSteps[9] && (
             <div className="mt-8 space-y-6 pt-6 border-t border-[#3C3D37]/60">
-              <div className="p-6 md:p-8 rounded-2xl bg-[#3C3D37]/20 border border-[#3C3D37] space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  <div>
+              <div className="p-6 md:p-8 rounded-2xl bg-[#3C3D37]/20 border border-[#3C3D37] space-y-6 min-w-0">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                  <div className="min-w-0 p-4 rounded-xl bg-[#181C14] border border-[#3C3D37] space-y-1">
                     <span className="text-xs uppercase text-[#697565] font-semibold tracking-wider block">
                       Input Decimal
                     </span>
-                    <span className="text-2xl font-bold text-[#ECDFCC] mt-1 block">
-                      {result.raw_input}
-                    </span>
+                    <div className="overflow-x-auto scrollbar-none min-w-0">
+                      <span className="text-xl sm:text-2xl font-bold text-[#ECDFCC] block font-mono whitespace-nowrap">
+                        {result.raw_input}
+                      </span>
+                    </div>
                   </div>
 
-                  <div>
+                  <div className="min-w-0 p-4 rounded-xl bg-[#181C14] border border-[#3C3D37] space-y-1">
                     <span className="text-xs uppercase text-[#697565] font-semibold tracking-wider block">
                       Selected Precision
                     </span>
-                    <span className="text-2xl font-bold text-[#ECDFCC] mt-1 block">
-                      {result.precision} (binary{result.step1.total_bits})
+                    <span className="text-xl sm:text-2xl font-bold text-[#ECDFCC] block">
+                      {result.precision} ({result.step1.total_bits}-bit)
                     </span>
                   </div>
 
-                  <div>
-                    <span className="text-xs uppercase text-[#697565] font-semibold tracking-wider block">
-                      Hexadecimal Output
-                    </span>
-                    <span className="text-2xl font-bold text-[#ECDFCC] mt-1 block tracking-wider">
-                      {result.step9.hex_string}
-                    </span>
+                  <div className="min-w-0 p-4 rounded-xl bg-[#181C14] border border-[#3C3D37] space-y-1">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs uppercase text-[#697565] font-semibold tracking-wider block">
+                        Hexadecimal Output
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(result.step9.hex_string);
+                          setCopiedHexStep9(true);
+                          setTimeout(() => setCopiedHexStep9(false), 2000);
+                        }}
+                        title="Copy Hex representation"
+                        className="p-1.5 rounded-lg bg-[#3C3D37]/60 hover:bg-[#3C3D37] text-[#ECDFCC] border border-[#3C3D37] transition-colors flex-shrink-0"
+                      >
+                        {copiedHexStep9 ? (
+                          <Check className="w-3.5 h-3.5 text-emerald-400" />
+                        ) : (
+                          <Copy className="w-3.5 h-3.5 text-[#697565]" />
+                        )}
+                      </button>
+                    </div>
+                    <div className="overflow-x-auto scrollbar-none min-w-0 py-0.5">
+                      <span className="text-base sm:text-lg md:text-xl font-bold text-[#ECDFCC] tracking-wider font-mono whitespace-nowrap block">
+                        {result.step9.hex_string}
+                      </span>
+                    </div>
                   </div>
 
-                  <div>
+                  <div className="min-w-0 p-4 rounded-xl bg-[#181C14] border border-[#3C3D37] space-y-1">
                     <span className="text-xs uppercase text-[#697565] font-semibold tracking-wider block">
                       Representation Status
                     </span>
-                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold mt-1 ${
+                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold mt-1 max-w-full ${
                       result.step9.is_exact ? 'bg-emerald-900/60 text-emerald-300' : 'bg-amber-900/60 text-amber-300'
                     }`}>
-                      <CheckCircle2 className="w-4 h-4" />
-                      {result.step9.is_exact ? 'Exact Representation' : 'Rounded / Inexact'}
+                      <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+                      <span className="truncate min-w-0">{result.step9.is_exact ? 'Exact Representation' : 'Rounded / Inexact'}</span>
                     </span>
                   </div>
                 </div>
 
                 <div className="pt-4 border-t border-[#3C3D37]/40 space-y-3">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <span className="text-sm font-semibold uppercase tracking-wider text-[#697565]">
-                      Decoded Machine Decimal Value
-                    </span>
-                    <span className="text-lg font-bold text-[#ECDFCC] tabular-nums break-all">
-                      {result.step9.exact_decoded_decimal}
-                    </span>
+                  <div className="p-4 rounded-xl bg-[#181C14] border border-[#3C3D37] space-y-2 min-w-0">
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-[#697565]">
+                        Decoded Machine Decimal Value
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(result.step9.exact_decoded_decimal);
+                          setCopiedDecimalStep9(true);
+                          setTimeout(() => setCopiedDecimalStep9(false), 2000);
+                        }}
+                        title="Copy Decoded Decimal value"
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#3C3D37]/50 hover:bg-[#3C3D37] text-[#ECDFCC] text-xs font-semibold uppercase tracking-wider border border-[#3C3D37] transition-colors flex-shrink-0"
+                      >
+                        {copiedDecimalStep9 ? (
+                          <>
+                            <Check className="w-3.5 h-3.5 text-emerald-400" />
+                            <span className="text-emerald-400">Copied</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-3.5 h-3.5 text-[#697565]" />
+                            <span>Copy Value</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                    <div className="overflow-x-auto scrollbar-thin py-1 min-w-0">
+                      <span className="text-base sm:text-lg font-bold text-[#ECDFCC] tabular-nums font-mono whitespace-nowrap block">
+                        {result.step9.exact_decoded_decimal}
+                      </span>
+                    </div>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <span className="text-sm font-semibold uppercase tracking-wider text-[#697565]">
+                  <div className="p-4 rounded-xl bg-[#181C14] border border-[#3C3D37] space-y-1.5 min-w-0">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-[#697565] block">
                       Representation Error / Difference |x - x̂|
                     </span>
-                    <span className="text-sm font-medium text-[#ECDFCC]/80 tabular-nums">
-                      {result.step9.difference}
-                    </span>
+                    <div className="overflow-x-auto scrollbar-thin min-w-0">
+                      <span className="text-sm sm:text-base font-semibold text-[#ECDFCC]/80 tabular-nums font-mono whitespace-nowrap block">
+                        {result.step9.difference}
+                      </span>
+                    </div>
                   </div>
                 </div>
 

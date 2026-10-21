@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Header } from './components/Header';
 import { InputSection } from './components/InputSection';
 import { BitVisualization } from './components/BitVisualization';
+import { ResultSummary } from './components/ResultSummary';
 import { StepSection } from './components/StepSection';
 import { Footer } from './components/Footer';
 import { convertDecimal } from './services/converter';
@@ -36,6 +37,11 @@ export const App: React.FC = () => {
     }
   };
 
+  const handleSelectExample = (val: string) => {
+    setInputVal(val);
+    runConversion(val, precision);
+  };
+
   const handleConvert = () => {
     if (!inputVal.trim()) {
       setError('Please enter a decimal number');
@@ -55,12 +61,14 @@ export const App: React.FC = () => {
           precision={precision}
           setPrecision={handlePrecisionChange}
           onConvert={handleConvert}
+          onSelectExample={handleSelectExample}
           error={error}
         />
 
         {result && (
           <div className="space-y-12 animate-in fade-in duration-300">
             <BitVisualization result={result} />
+            <ResultSummary result={result} />
             <StepSection result={result} />
           </div>
         )}

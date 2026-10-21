@@ -9,21 +9,30 @@
 @tailwind utilities;
 
 @layer base {
-  *, ::before, ::after {
-    font-family: 'DM Sans', sans-serif !important;
-  }
-  
   body {
     background-color: #181C14;
     color: #ECDFCC;
     font-family: 'DM Sans', sans-serif !important;
     overflow-x: hidden;
   }
+
+  /* DM Sans globally across all UI elements, inputs, buttons, tables, bits, and hex */
+  *:not(.katex *):not(.katex),
+  *::before:not(.katex *):not(.katex),
+  *::after:not(.katex *):not(.katex) {
+    font-family: 'DM Sans', sans-serif !important;
+  }
 }
 
 .tabular-nums {
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum";
+}
+
+/* Explicit monospace preservation for binary bit patterns and hexadecimal words */
+.font-mono,
+.font-mono * {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
 }
 
 /* Custom scrollbars */
@@ -39,6 +48,26 @@
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
+  background: #697565;
+}
+
+/* Thin custom scrollbar utility */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #3C3D37 #181C14;
+}
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: #181C14;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #3C3D37;
+  border-radius: 3px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
   background: #697565;
 }
 

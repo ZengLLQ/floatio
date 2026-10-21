@@ -68,7 +68,7 @@ pub struct DivisionRow {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MultiplicationRow {
-    pub step: usize,
+    pub step: u32,
     pub expression: String,
     pub integer_bit: String,
     pub remaining_fraction: String,
@@ -76,7 +76,7 @@ pub struct MultiplicationRow {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct NibbleConversion {
-    pub index: usize,
+    pub index: u32,
     pub binary: String,
     pub hex: String,
     pub bit_range: String,
@@ -87,10 +87,10 @@ pub struct NibbleConversion {
 pub struct Step1InputAnalysis {
     pub raw_input: String,
     pub precision: Precision,
-    pub total_bits: usize,
-    pub sign_bits: usize,
-    pub exponent_bits: usize,
-    pub fraction_bits: usize,
+    pub total_bits: u32,
+    pub sign_bits: u32,
+    pub exponent_bits: u32,
+    pub fraction_bits: u32,
     pub bias: i32,
     pub category: NumberCategory,
     pub latex_formula: String,
@@ -150,7 +150,7 @@ pub struct Step5BiasedExponent {
 pub struct Step6FractionField {
     pub significand_with_hidden: String,
     pub raw_fraction_bits: String,
-    pub target_bit_length: usize,
+    pub target_bit_length: u32,
     pub final_fraction_bits: String,
     pub guard_bit: Option<char>,
     pub round_bit: Option<char>,

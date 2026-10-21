@@ -1,4 +1,5 @@
 use wasm_bindgen::prelude::*;
+use serde::Serialize;
 use ieee754_core::{convert, Precision};
 
 #[wasm_bindgen]
@@ -10,7 +11,10 @@ pub fn convert_ieee754(input: &str, precision_str: &str) -> Result<JsValue, JsVa
 
     match convert(input, precision) {
         Ok(result) => {
-            serde_wasm_bindgen::to_value(&result)
+            let serializer = serde_wasm_bindgen::Serializer::new()
+                .serialize_large_number_types_as_bigints(true);
+            result
+                .serialize(&serializer)
                 .map_err(|e| JsValue::from_str(&format!("Serialization error: {}", e)))
         }
         Err(err) => Err(JsValue::from_str(&err)),
