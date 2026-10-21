@@ -1,0 +1,16 @@
+{
+  "name": "ieee-754-explorer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Interactive educational IEEE 754 Floating-Point Converter & Mathematical Derivation Engine",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "npm --prefix apps/web run build",
+    "dev": "npm --prefix apps/web run dev",
+    "test": "cargo test --workspace"
+  },
+  "author": "JAYCEE 曾令强",
+  "license": "MIT"
+}

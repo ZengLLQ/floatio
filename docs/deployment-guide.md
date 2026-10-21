@@ -29,7 +29,8 @@ Because the compiled WebAssembly package is pre-bundled in `apps/web/src/wasm/`,
 3. **Verify Configuration:**
    Vercel reads [`vercel.json`](../vercel.json) automatically from the repository root:
    - **Framework Preset:** Vite
-   - **Build Command:** `cd apps/web && npm run build`
+   - **Install Command:** `cd apps/web && npm install`
+   - **Build Command:** `cd apps/web && npm install && npm run build`
    - **Output Directory:** `apps/web/dist`
    - **WASM MIME Header:** Automatically serves `.wasm` files with `Content-Type: application/wasm` and immutable caching headers:
      ```json
