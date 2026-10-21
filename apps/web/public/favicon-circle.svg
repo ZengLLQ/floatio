@@ -1,132 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
-  <defs>
-    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
-      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#000000" flood-opacity="0.6"/>
-    </filter>
-  </defs>
-
-  <!-- 1. Circular Outer Base -->
-  <circle cx="256" cy="256" r="256" fill="#181C14" />
-  
-  <!-- 2. Concentric Outer Trim Rings -->
-  <circle cx="256" cy="256" r="246" fill="none" stroke="#3C3D37" stroke-width="6" />
-  <circle cx="256" cy="256" r="236" fill="none" stroke="#697565" stroke-width="2.5" stroke-dasharray="14 10" opacity="0.8" />
-  <circle cx="256" cy="256" r="222" fill="none" stroke="#3C3D37" stroke-width="3" />
-
-  <!-- 3. Microchip Radial Connecting Pins -->
-  <g stroke="#697565" stroke-width="6" stroke-linecap="round" opacity="0.9">
-    <!-- Top Pins -->
-    <line x1="226" y1="26" x2="226" y2="84" />
-    <line x1="256" y1="20" x2="256" y2="84" stroke="#ECDFCC" stroke-width="7" />
-    <line x1="286" y1="26" x2="286" y2="84" />
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <circle cx="256" cy="256" r="256" fill="#181C14"/>
+  <circle cx="256" cy="256" r="224" fill="none" stroke="#3C3D37" stroke-width="12"/>
+  <g transform="translate(64, 211)">
+    <!-- Sign bit block -->
+    <rect x="0" y="0" width="60" height="90" rx="16" fill="#697565"/>
+    <text x="30" y="58" font-family="'DM Sans', system-ui, -apple-system, sans-serif" font-size="40" font-weight="bold" fill="#181C14" text-anchor="middle">S</text>
     
-    <!-- Bottom Pins -->
-    <line x1="226" y1="428" x2="226" y2="486" />
-    <line x1="256" y1="428" x2="256" y2="492" stroke="#ECDFCC" stroke-width="7" />
-    <line x1="286" y1="428" x2="286" y2="486" />
+    <!-- Exponent block -->
+    <rect x="76" y="0" width="130" height="90" rx="16" fill="#697565"/>
+    <text x="141" y="58" font-family="'DM Sans', system-ui, -apple-system, sans-serif" font-size="34" font-weight="bold" fill="#ECDFCC" text-anchor="middle">EXP</text>
     
-    <!-- Left Pins -->
-    <line x1="26" y1="226" x2="84" y2="226" />
-    <line x1="20" y1="256" x2="84" y2="256" stroke="#ECDFCC" stroke-width="7" />
-    <line x1="26" y1="286" x2="84" y2="286" />
-    
-    <!-- Right Pins -->
-    <line x1="428" y1="226" x2="486" y2="226" />
-    <line x1="428" y1="256" x2="492" y2="256" stroke="#ECDFCC" stroke-width="7" />
-    <line x1="428" y1="286" x2="486" y2="286" />
-  </g>
-
-  <!-- Corner Terminal Nodes -->
-  <g fill="#ECDFCC">
-    <circle cx="82" cy="82" r="7" />
-    <circle cx="430" cy="82" r="7" />
-    <circle cx="82" cy="430" r="7" />
-    <circle cx="430" cy="430" r="7" />
-  </g>
-
-  <!-- 4. Central Processor Chassis (Dark Card) -->
-  <rect x="88" y="88" width="336" height="336" rx="44" fill="#181C14" stroke="#3C3D37" stroke-width="6" filter="url(#shadow)" />
-  <rect x="94" y="94" width="324" height="324" rx="38" fill="#181C14" stroke="#697565" stroke-width="2" opacity="0.5" />
-
-  <!-- ======================================================== -->
-  <!-- 5. TABLE 1: IEEE 754 BIT PATTERN SEGMENTED TABLE (TOP)   -->
-  <!-- ======================================================== -->
-  <g transform="translate(108, 112)">
-    <!-- Table Outer Box -->
-    <rect x="0" y="0" width="296" height="96" rx="16" fill="#181C14" stroke="#697565" stroke-width="4" />
-    
-    <!-- Header Background Bars -->
-    <rect x="2" y="2" width="46" height="42" rx="14" fill="#697565" opacity="0.3" />
-    <rect x="52" y="2" width="94" height="42" fill="#3C3D37" opacity="0.6" />
-    <rect x="150" y="2" width="144" height="42" rx="14" fill="#181C14" />
-    <line x1="0" y1="44" x2="296" y2="44" stroke="#697565" stroke-width="3" />
-
-    <!-- Column Dividers -->
-    <line x1="50" y1="0" x2="50" y2="96" stroke="#697565" stroke-width="3" />
-    <line x1="148" y1="0" x2="148" y2="96" stroke="#697565" stroke-width="3" />
-
-    <!-- Header Labels -->
-    <text x="25" y="28" text-anchor="middle" font-family="'DM Sans', system-ui, sans-serif" font-weight="900" font-size="16" fill="#ECDFCC" letter-spacing="1">SIGN</text>
-    <text x="99" y="28" text-anchor="middle" font-family="'DM Sans', system-ui, sans-serif" font-weight="900" font-size="16" fill="#ECDFCC" letter-spacing="1">EXPONENT</text>
-    <text x="222" y="28" text-anchor="middle" font-family="'DM Sans', system-ui, sans-serif" font-weight="900" font-size="16" fill="#ECDFCC" letter-spacing="1">FRACTION</text>
-
-    <!-- Header Bit Widths -->
-    <text x="25" y="40" text-anchor="middle" font-family="'DM Sans', system-ui, sans-serif" font-weight="700" font-size="10" fill="#697565">1 BIT</text>
-    <text x="99" y="40" text-anchor="middle" font-family="'DM Sans', system-ui, sans-serif" font-weight="700" font-size="10" fill="#697565">8 BITS</text>
-    <text x="222" y="40" text-anchor="middle" font-family="'DM Sans', system-ui, sans-serif" font-weight="700" font-size="10" fill="#697565">23 BITS</text>
-
-    <!-- Data Row: Bit Values -->
-    <text x="25" y="76" text-anchor="middle" font-family="'DM Sans', ui-monospace, monospace" font-weight="900" font-size="24" fill="#ECDFCC">0</text>
-    <text x="99" y="75" text-anchor="middle" font-family="'DM Sans', ui-monospace, monospace" font-weight="800" font-size="15" fill="#ECDFCC" letter-spacing="1">10000101</text>
-    <text x="222" y="75" text-anchor="middle" font-family="'DM Sans', ui-monospace, monospace" font-weight="700" font-size="14" fill="#697565" letter-spacing="0.5">11111001000...</text>
-  </g>
-
-  <!-- ======================================================== -->
-  <!-- 6. TABLE 2: REPEATED DIVISION CALCULATION TABLE (BOTTOM) -->
-  <!-- ======================================================== -->
-  <g transform="translate(108, 224)">
-    <!-- Table Outer Box -->
-    <rect x="0" y="0" width="296" height="184" rx="16" fill="#181C14" stroke="#3C3D37" stroke-width="4" />
-    
-    <!-- Table Header Background -->
-    <rect x="2" y="2" width="292" height="38" rx="14" fill="#3C3D37" opacity="0.6" />
-    <line x1="0" y1="40" x2="296" y2="40" stroke="#3C3D37" stroke-width="3" />
-
-    <!-- Column Dividers -->
-    <line x1="104" y1="0" x2="104" y2="184" stroke="#3C3D37" stroke-width="3" />
-    <line x1="208" y1="0" x2="208" y2="184" stroke="#3C3D37" stroke-width="3" />
-
-    <!-- Table Header Text -->
-    <text x="52" y="26" text-anchor="middle" font-family="'DM Sans', system-ui, sans-serif" font-weight="800" font-size="14" fill="#ECDFCC" letter-spacing="1">DIVISION</text>
-    <text x="156" y="26" text-anchor="middle" font-family="'DM Sans', system-ui, sans-serif" font-weight="800" font-size="14" fill="#ECDFCC" letter-spacing="1">QUOTIENT</text>
-    <text x="252" y="26" text-anchor="middle" font-family="'DM Sans', system-ui, sans-serif" font-weight="800" font-size="14" fill="#ECDFCC" letter-spacing="1">REMAINDER</text>
-
-    <!-- Horizontal Row Dividers -->
-    <line x1="0" y1="76" x2="296" y2="76" stroke="#3C3D37" stroke-width="2" />
-    <line x1="0" y1="112" x2="296" y2="112" stroke="#3C3D37" stroke-width="2" />
-    <line x1="0" y1="148" x2="296" y2="148" stroke="#3C3D37" stroke-width="2" />
-
-    <!-- Row 1 -->
-    <text x="52" y="63" text-anchor="middle" font-family="'DM Sans', ui-monospace, monospace" font-weight="700" font-size="15" fill="#697565">126 ÷ 2</text>
-    <text x="156" y="63" text-anchor="middle" font-family="'DM Sans', ui-monospace, monospace" font-weight="700" font-size="15" fill="#ECDFCC">63</text>
-    <circle cx="252" cy="58" r="13" fill="#697565" opacity="0.3" />
-    <text x="252" y="64" text-anchor="middle" font-family="'DM Sans', ui-monospace, monospace" font-weight="900" font-size="16" fill="#ECDFCC">0</text>
-
-    <!-- Row 2 -->
-    <text x="52" y="99" text-anchor="middle" font-family="'DM Sans', ui-monospace, monospace" font-weight="700" font-size="15" fill="#697565">63 ÷ 2</text>
-    <text x="156" y="99" text-anchor="middle" font-family="'DM Sans', ui-monospace, monospace" font-weight="700" font-size="15" fill="#ECDFCC">31</text>
-    <circle cx="252" cy="94" r="13" fill="#697565" opacity="0.3" />
-    <text x="252" y="100" text-anchor="middle" font-family="'DM Sans', ui-monospace, monospace" font-weight="900" font-size="16" fill="#ECDFCC">1</text>
-
-    <!-- Row 3 -->
-    <text x="52" y="135" text-anchor="middle" font-family="'DM Sans', ui-monospace, monospace" font-weight="700" font-size="15" fill="#697565">31 ÷ 2</text>
-    <text x="156" y="135" text-anchor="middle" font-family="'DM Sans', ui-monospace, monospace" font-weight="700" font-size="15" fill="#ECDFCC">15</text>
-    <circle cx="252" cy="130" r="13" fill="#697565" opacity="0.3" />
-    <text x="252" y="136" text-anchor="middle" font-family="'DM Sans', ui-monospace, monospace" font-weight="900" font-size="16" fill="#ECDFCC">1</text>
-
-    <!-- Row 4 (ellipsis continuation) -->
-    <text x="52" y="170" text-anchor="middle" font-family="'DM Sans', ui-monospace, monospace" font-weight="700" font-size="15" fill="#697565">...</text>
-    <text x="156" y="170" text-anchor="middle" font-family="'DM Sans', ui-monospace, monospace" font-weight="700" font-size="15" fill="#697565">...</text>
-    <text x="252" y="170" text-anchor="middle" font-family="'DM Sans', ui-monospace, monospace" font-weight="900" font-size="16" fill="#ECDFCC">↑ LSB</text>
+    <!-- Fraction block -->
+    <rect x="222" y="0" width="162" height="90" rx="16" fill="#3C3D37"/>
+    <text x="303" y="58" font-family="'DM Sans', system-ui, -apple-system, sans-serif" font-size="34" font-weight="bold" fill="#ECDFCC" text-anchor="middle">FRAC</text>
   </g>
 </svg>
