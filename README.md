@@ -171,18 +171,26 @@ cargo test --workspace
 
 ---
 
-## 📦 Desktop Packaging
+## 📦 Desktop Packaging & Downloads
 
-To build the native Windows installer:
+### Download Official v1.0.0 Releases:
+- **macOS Installer (.dmg)**: [Floatio_1.0.0_aarch64.dmg](https://github.com/ZengLLQ/floatio/releases/download/v1.0.0/Floatio_1.0.0_aarch64.dmg) (Apple Silicon M1/M2/M3/M4)
+- **Windows Installer (.exe)**: [Floatio_1.0.0_x64-setup.exe](https://github.com/ZengLLQ/floatio/releases/download/v1.0.0/Floatio_1.0.0_x64-setup.exe) (Windows 10/11 x64)
 
+### Building Desktop Packages Locally:
+
+#### Windows:
 ```bash
 cd apps/desktop
 npm run build
+# Installer output: target/release/bundle/nsis/Floatio_1.0.0_x64-setup.exe
 ```
 
-The resulting NSIS installer with embedded multi-size icons is output to:
-```
-target/release/bundle/nsis/Floatio_1.0.0_x64-setup.exe
+#### macOS (via Xcode & Apple toolchain):
+```bash
+cd apps/desktop
+npx @tauri-apps/cli build --bundles dmg,app
+# Output: target/release/bundle/dmg/Floatio_1.0.0_aarch64.dmg
 ```
 
 ---
