@@ -22,7 +22,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Setup Rust stable
         uses: dtolnay/rust-toolchain@stable
@@ -40,7 +40,14 @@ jobs:
       - name: Build Desktop Application (macOS DMG & App)
         run: |
           cd apps/desktop
-          npx tauri build --bundles dmg,app
+          npx --yes @tauri-apps/cli build --bundles dmg,app
+
+      - name: Package .app archive
+        run: |
+          if [ -d "target/release/bundle/macos/Floatio.app" ]; then
+            cd target/release/bundle/macos
+            tar -czvf Floatio_1.0.0_aarch64.app.tar.gz Floatio.app
+          fi
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
@@ -48,7 +55,7 @@ jobs:
           name: floatio-macos-installer
           path: |
             target/release/bundle/dmg/*.dmg
-            target/release/bundle/macos/*.app
+            target/release/bundle/macos/*.tar.gz
 
       - name: Release to GitHub
         uses: softprops/action-gh-release@v2
@@ -58,16 +65,6 @@ jobs:
           name: "Floatio v1.0.0"
           draft: false
           prerelease: false
-          body: |
-            ## Floatio v1.0.0 — Official Multi-Platform Release
-
-            Interactive educational developer tool converting decimal numbers into IEEE 754 floating-point representations with sequential derivations.
-
-            ### 📦 Download Installers:
-            - **macOS Installer (.dmg)**: `Floatio_1.0.0_aarch64.dmg` (Apple Silicon M1/M2/M3/M4)
-            - **Windows Installer (.exe)**: `Floatio_1.0.0_x64-setup.exe` (Windows 10/11 x64)
-
-            ### 🌐 Live Web Version:
-            - Deployed on Vercel: [https://github.com/ZengLLQ/floatio](https://github.com/ZengLLQ/floatio)
           files: |
             target/release/bundle/dmg/*.dmg
+            target/release/bundle/macos/*.tar.gz
