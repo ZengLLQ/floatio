@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "IEEE 754 Explorer",
+  "productName": "Floatio",
   "version": "1.0.0",
-  "identifier": "com.jaycee.ieee754explorer",
+  "identifier": "com.jaycee.floatio",
   "build": {
     "beforeDevCommand": "npm --prefix ../web run dev",
     "devUrl": "http://localhost:5173",
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "IEEE 754 Explorer",
+        "title": "Floatio",
         "width": 1400,
         "height": 900,
         "minWidth": 900,

@@ -2,7 +2,7 @@
 name = "ieee754-wasm"
 version = "0.1.0"
 edition = "2021"
-description = "WebAssembly bindings for IEEE 754 Explorer"
+description = "WebAssembly bindings for Floatio"
 authors = ["JAYCEE 曾令强"]
 
 [lib]

@@ -1,4 +1,4 @@
-# IEEE 754 Explorer — API Reference
+# Floatio — API Reference
 
 > **Complete Interface Reference for Rust Core, WebAssembly, and TypeScript**  
 > *Author: JAYCEE 曾令强*

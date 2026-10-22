@@ -10,7 +10,7 @@ export const Header: React.FC = () => {
             <Cpu className="w-5 h-5 text-[#ECDFCC]" />
           </div>
           <span className="text-xl md:text-2xl font-bold tracking-tight text-[#ECDFCC]">
-            IEEE 754 Explorer
+            Floatio
           </span>
         </div>
 

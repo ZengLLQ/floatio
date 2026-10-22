@@ -4,7 +4,7 @@
   "collaborators": [
     "JAYCEE 曾令强"
   ],
-  "description": "WebAssembly bindings for IEEE 754 Explorer",
+  "description": "WebAssembly bindings for Floatio",
   "version": "0.1.0",
   "files": [
     "ieee754_wasm_bg.wasm",

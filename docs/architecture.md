@@ -1,4 +1,4 @@
-# IEEE 754 Explorer — System Architecture
+# Floatio — System Architecture
 
 > **Definitive Technical Architecture Document**  
 > *Author: JAYCEE 曾令强*  
@@ -8,7 +8,7 @@
 
 ## 1. Executive Summary
 
-**IEEE 754 Explorer** is an educational software system engineered to bridge the gap between abstract computer arithmetic theory and practical binary encoding. Rather than functioning as a black-box calculator, it implements a transparent mathematical derivation pipeline that decomposes any real decimal number into IEEE 754 single-precision (binary32) or double-precision (binary64) representations.
+**Floatio** is an educational software system engineered to bridge the gap between abstract computer arithmetic theory and practical binary encoding. Rather than functioning as a black-box calculator, it implements a transparent mathematical derivation pipeline that decomposes any real decimal number into IEEE 754 single-precision (binary32) or double-precision (binary64) representations.
 
 The system uses a **Single Source of Mathematical Truth** architecture: a core Rust engine (`ieee754-core`) handles all parsing, division, multiplication, normalization, rounding, and assembly. This same core compiles natively for desktop execution via Tauri 2 and compiles to WebAssembly for browser deployment via Vercel.
 

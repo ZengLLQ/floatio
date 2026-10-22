@@ -8,7 +8,7 @@
 
 ## 1. IEEE 754 Formats Overview
 
-IEEE 754 defines formats for representing floating-point numbers in binary computer hardware. The two primary formats supported by IEEE 754 Explorer are:
+IEEE 754 defines formats for representing floating-point numbers in binary computer hardware. The two primary formats supported by Floatio are:
 
 | Parameter | Single Precision (binary32) | Double Precision (binary64) |
 | :--- | :---: | :---: |

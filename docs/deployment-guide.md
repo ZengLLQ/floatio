@@ -1,4 +1,4 @@
-# IEEE 754 Explorer — Deployment & Packaging Guide
+# Floatio — Deployment & Packaging Guide
 
 > **Production Deployment Guide for Vercel Web Hosting & Windows Desktop Packaging**  
 > *Author: JAYCEE 曾令强*
@@ -17,14 +17,14 @@ Because the compiled WebAssembly package is pre-bundled in `apps/web/src/wasm/`,
 1. **Push Repository to GitHub:**
    ```bash
    git add .
-   git commit -m "feat: complete IEEE 754 Explorer release"
+   git commit -m "feat: complete Floatio release"
    git push origin main
    ```
 
 2. **Import Project into Vercel:**
    - Log into your [Vercel Dashboard](https://vercel.com).
    - Click **Add New...** $\rightarrow$ **Project**.
-   - Select the `ieee-754-explorer` repository.
+   - Select the `floatio` repository.
 
 3. **Verify Configuration:**
    Vercel reads [`vercel.json`](../vercel.json) automatically from the repository root:
@@ -50,7 +50,7 @@ Because the compiled WebAssembly package is pre-bundled in `apps/web/src/wasm/`,
      ```
 
 4. **Deploy:**
-   Click **Deploy**. Your application will be live at `https://ieee-754-explorer.vercel.app` (or your custom domain) with instant worldwide edge CDN caching.
+   Click **Deploy**. Your application will be live at `https://floatio.vercel.app` (or your custom domain) with instant worldwide edge CDN caching.
 
 ---
 
@@ -77,11 +77,11 @@ npm run build
 
 Upon successful completion, the installer is generated at:
 ```
-target/release/bundle/nsis/IEEE 754 Explorer_1.0.0_x64-setup.exe
+target/release/bundle/nsis/Floatio_1.0.0_x64-setup.exe
 ```
 And the standalone portable binary is generated at:
 ```
-target/release/ieee754-desktop.exe
+target/release/floatio-desktop.exe
 ```
 
 ### Installer Characteristics:

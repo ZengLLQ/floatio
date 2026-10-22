@@ -1,4 +1,4 @@
-# IEEE 754 Explorer — User & Educational Guide
+# Floatio — User & Educational Guide
 
 > **Interactive Step-by-Step Learning Guide for Students & Engineers**  
 > *Author: JAYCEE 曾令强*
@@ -7,7 +7,7 @@
 
 ## 1. Getting Started
 
-When you launch **IEEE 754 Explorer**, the application opens to the conversion workspace:
+When you launch **Floatio**, the application opens to the conversion workspace:
 
 1. **Precision Selector:** Toggle between **Single Precision (32-bit / binary32)** and **Double Precision (64-bit / binary64)** using the segmented control at the top.
 2. **Decimal Input Field:** Enter any decimal number or select one of the built-in preset values.

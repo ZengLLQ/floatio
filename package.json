@@ -1,8 +1,8 @@
 {
-  "name": "ieee-754-explorer",
+  "name": "floatio",
   "version": "1.0.0",
   "private": true,
-  "description": "Interactive educational IEEE 754 Floating-Point Converter & Mathematical Derivation Engine",
+  "description": "Floatio — Interactive educational IEEE 754 Floating-Point Converter & Mathematical Derivation Engine",
   "workspaces": [
     "apps/*"
   ],

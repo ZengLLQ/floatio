@@ -1,4 +1,4 @@
-# IEEE 754 Explorer
+# Floatio
 
 <div align="center">
 
@@ -12,7 +12,7 @@
 ![Vercel](https://img.shields.io/badge/Vercel-Deployable-black?logo=vercel)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-**University-grade Interactive IEEE 754 Floating-Point Converter & Mathematical Derivation Engine**  
+**Floatio — University-grade Interactive IEEE 754 Floating-Point Converter & Mathematical Derivation Engine**  
 *Rust Desktop Application (Tauri 2) + Web Application (WebAssembly + React + Vite + Tailwind CSS)*  
 
 **Made by JAYCEE 曾令强**
@@ -40,9 +40,9 @@
 
 ## 🎯 Project Purpose
 
-**IEEE 754 Explorer** is an interactive educational developer tool designed for university students, educators, and computer systems engineers studying Digital Systems, Computer Organization, and Computer Architecture.
+**Floatio** is an interactive educational developer tool designed for university students, educators, and computer systems engineers studying Digital Systems, Computer Organization, and Computer Architecture.
 
-Unlike standard black-box calculators that merely output a hexadecimal number, IEEE 754 Explorer breaks down every mathematical operation required to convert a real decimal number into its IEEE 754 single-precision (binary32) or double-precision (binary64) representation. It illustrates integer repeated division by 2, fractional repeated multiplication by 2, normalization with interactive binary point movement, exponent bias calculation, fraction field rounding with round-to-nearest ties-to-even, bitstream concatenation, and nibble-by-nibble hexadecimal translation.
+Unlike standard black-box calculators that merely output a hexadecimal number, Floatio breaks down every mathematical operation required to convert a real decimal number into its IEEE 754 single-precision (binary32) or double-precision (binary64) representation. It illustrates integer repeated division by 2, fractional repeated multiplication by 2, normalization with interactive binary point movement, exponent bias calculation, fraction field rounding with round-to-nearest ties-to-even, bitstream concatenation, and nibble-by-nibble hexadecimal translation.
 
 ---
 
@@ -182,7 +182,7 @@ npm run build
 
 The resulting NSIS installer with embedded multi-size icons is output to:
 ```
-target/release/bundle/nsis/IEEE 754 Explorer_1.0.0_x64-setup.exe
+target/release/bundle/nsis/Floatio_1.0.0_x64-setup.exe
 ```
 
 ---
