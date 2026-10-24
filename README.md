@@ -171,13 +171,17 @@ cargo test --workspace
 
 ---
 
-## 📦 Desktop Packaging & Downloads
+## 📦 Releases & Multi-Platform Downloads
 
 ### Download Official v1.0.0 Releases:
 - **macOS Installer (.dmg)**: [Floatio_1.0.0_aarch64.dmg](https://github.com/ZengLLQ/floatio/releases/download/v1.0.0/Floatio_1.0.0_aarch64.dmg) (Apple Silicon M1/M2/M3/M4)
-- **Windows Installer (.exe)**: [Floatio_1.0.0_x64-setup.exe](https://github.com/ZengLLQ/floatio/releases/download/v1.0.0/Floatio_1.0.0_x64-setup.exe) (Windows 10/11 x64)
+- **Windows Installer & Uninstaller (.exe)**: [Floatio_1.0.0_x64-setup.exe](https://github.com/ZengLLQ/floatio/releases/download/v1.0.0/Floatio_1.0.0_x64-setup.exe) (Windows 10/11 x64)
+  - Full NSIS installer with Floatio squircle branding headers and sidebars.
+  - Generates desktop shortcut and Start Menu shortcuts including `Uninstall Floatio.lnk`.
+- **Android App Package (.apk)**: [Floatio_1.0.0.apk](https://github.com/ZengLLQ/floatio/releases/download/v1.0.0/Floatio_1.0.0.apk) (Universal: ARM64, ARMv7, x86, x86_64)
+  - Signed with APK Signature Scheme v2 & v3, ready to install on Android 7.0+ (API 24+).
 
-### Building Desktop Packages Locally:
+### Building Multi-Platform Packages Locally:
 
 #### Windows:
 ```bash
@@ -186,11 +190,18 @@ npm run build
 # Installer output: target/release/bundle/nsis/Floatio_1.0.0_x64-setup.exe
 ```
 
-#### macOS (via Xcode & Apple toolchain):
+#### macOS (via Apple toolchain):
 ```bash
 cd apps/desktop
-npx @tauri-apps/cli build --bundles dmg,app
+npm run tauri -- build --bundles dmg,app
 # Output: target/release/bundle/dmg/Floatio_1.0.0_aarch64.dmg
+```
+
+#### Android (APK):
+```bash
+cd apps/desktop
+npm run tauri -- android build --apk
+# Output: apps/desktop/src-tauri/gen/android/app/build/outputs/apk/universal/release/
 ```
 
 ---

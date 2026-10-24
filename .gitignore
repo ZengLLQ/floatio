@@ -13,3 +13,9 @@ apps/web/dist
 .DS_Store
 Thumbs.db
 *.log
+
+# Mobile and Keystores
+*.apk
+*.idsig
+*.keystore
+*.jks
